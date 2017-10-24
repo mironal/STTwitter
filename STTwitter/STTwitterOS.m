@@ -81,6 +81,7 @@ const NSString *STTwitterOSInvalidatedAccount = @"STTwitterOSInvalidatedAccount"
              HTTPMethod:@"GET"
           baseURLString:@"https://api.twitter.com/1.1"
              parameters:nil
+     isJSONPOSTRequest:NO
     uploadProgressBlock:nil
   downloadProgressBlock:nil
            successBlock:^(NSObject<STTwitterRequestProtocol> *request, NSDictionary *requestHeaders, NSDictionary *responseHeaders, id response) {
@@ -286,6 +287,7 @@ const NSString *STTwitterOSInvalidatedAccount = @"STTwitterOSInvalidatedAccount"
                                            HTTPMethod:(NSString *)HTTPMethod
                                         baseURLString:(NSString *)baseURLString
                                            parameters:(NSDictionary *)params
+                                    isJSONPOSTRequest:(BOOL)isJSONPOSTRequest
                                   uploadProgressBlock:(void(^)(int64_t bytesWritten, int64_t totalBytesWritten, int64_t totalBytesExpectedToWrite))uploadProgressBlock
                                 downloadProgressBlock:(void (^)(NSObject<STTwitterRequestProtocol> *request, NSData *data))progressBlock // FIXME: how to handle progressBlock?
                                          successBlock:(void (^)(NSObject<STTwitterRequestProtocol> *request, NSDictionary *requestHeaders, NSDictionary *responseHeaders, id response))successBlock
@@ -384,6 +386,7 @@ const NSString *STTwitterOSInvalidatedAccount = @"STTwitterOSInvalidatedAccount"
              HTTPMethod:@"POST"
           baseURLString:@"https://api.twitter.com"
              parameters:d
+     isJSONPOSTRequest:NO
     uploadProgressBlock:nil
   downloadProgressBlock:nil
            successBlock:^(id request, NSDictionary *requestHeaders, NSDictionary *responseHeaders, id response) {

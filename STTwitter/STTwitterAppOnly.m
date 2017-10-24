@@ -192,10 +192,12 @@
     return r;
 }
 
+
 - (NSObject<STTwitterRequestProtocol> *)fetchResource:(NSString *)resource
                                            HTTPMethod:(NSString *)HTTPMethod
                                         baseURLString:(NSString *)baseURLString
                                            parameters:(NSDictionary *)params
+                                    isJSONPOSTRequest:(BOOL)isJSONPOSTRequest
                                   uploadProgressBlock:(void(^)(int64_t bytesWritten, int64_t totalBytesWritten, int64_t totalBytesExpectedToWrite))uploadProgressBlock
                                 downloadProgressBlock:(void(^)(NSObject<STTwitterRequestProtocol> *r, NSData *data))downloadProgressBlock
                                          successBlock:(void(^)(NSObject<STTwitterRequestProtocol> *r, NSDictionary *requestHeaders, NSDictionary *responseHeaders, id json))successBlock

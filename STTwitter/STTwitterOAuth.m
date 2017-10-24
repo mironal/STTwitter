@@ -238,6 +238,7 @@
                  HTTPMethod:@"GET"
               baseURLString:@"https://api.twitter.com/1.1"
                  parameters:nil
+         isJSONPOSTRequest:NO
               oauthCallback:nil
         uploadProgressBlock:nil
       downloadProgressBlock:nil
@@ -289,6 +290,7 @@
              HTTPMethod:@"POST"
           baseURLString:@"https://api.twitter.com"
              parameters:@{}
+      isJSONPOSTRequest:NO
           oauthCallback:theOAuthCallback
     uploadProgressBlock:nil
   downloadProgressBlock:nil
@@ -342,6 +344,7 @@
              HTTPMethod:@"POST"
           baseURLString:@"https://api.twitter.com"
              parameters:@{@"x_auth_mode" : @"reverse_auth"}
+      isJSONPOSTRequest:NO
           oauthCallback:nil
     uploadProgressBlock:nil
   downloadProgressBlock:nil
@@ -521,6 +524,7 @@
                                            HTTPMethod:(NSString *)HTTPMethod
                                         baseURLString:(NSString *)baseURLString
                                            parameters:(NSDictionary *)params
+                                    isJSONPOSTRequest:(BOOL)isJSONPOSTRequest
                                   uploadProgressBlock:(void(^)(int64_t bytesWritten, int64_t totalBytesWritten, int64_t totalBytesExpectedToWrite))uploadProgressBlock
                                 downloadProgressBlock:(void(^)(NSObject<STTwitterRequestProtocol> *request, NSData *data))progressBlock
                                          successBlock:(void(^)(NSObject<STTwitterRequestProtocol> *request, NSDictionary *requestHeaders, NSDictionary *responseHeaders, id response))successBlock
@@ -530,6 +534,7 @@
                     HTTPMethod:HTTPMethod
                  baseURLString:baseURLString
                     parameters:params
+             isJSONPOSTRequest:isJSONPOSTRequest
                  oauthCallback:nil
            uploadProgressBlock:uploadProgressBlock
          downloadProgressBlock:progressBlock
@@ -541,6 +546,7 @@
                       HTTPMethod:(NSString *)HTTPMethod
                    baseURLString:(NSString *)baseURLString
                       parameters:(NSDictionary *)params
+               isJSONPOSTRequest:(BOOL)isJSONPOSTRequest
                    oauthCallback:(NSString *)oauthCallback
              uploadProgressBlock:(void(^)(int64_t bytesWritten, int64_t totalBytesWritten, int64_t totalBytesExpectedToWrite))uploadProgressBlock
            downloadProgressBlock:(void(^)(STHTTPRequest *r, NSData *data))downloadProgressBlock
@@ -572,6 +578,19 @@
     if([HTTPMethod isEqualToString:@"GET"]) {
         r.GETDictionary = params;
         [self signRequest:r];
+        
+    } else if (isJSONPOSTRequest) {
+
+        NSError *error = nil;
+        r.rawPOSTData = [NSJSONSerialization dataWithJSONObject:params
+                                                        options:kNilOptions
+                                                          error:&error];
+
+        [self signRequest:r isMediaUpload:NO oauthCallback:oauthCallback];
+        r.requestHeaders[@"Content-Type"] = @"application/json";
+
+        NSAssert(error == nil, @"got error");
+
     } else {
         // https://dev.twitter.com/docs/api/1.1/post/statuses/update_with_media
         
@@ -615,6 +634,7 @@
                     HTTPMethod:@"POST"
                  baseURLString:baseURLString
                     parameters:params
+             isJSONPOSTRequest:NO
                  oauthCallback:nil
            uploadProgressBlock:nil
          downloadProgressBlock:progressBlock
@@ -634,6 +654,7 @@
                     HTTPMethod:@"POST"
                  baseURLString:baseURLString
                     parameters:params
+             isJSONPOSTRequest:NO
                  oauthCallback:oauthCallback
            uploadProgressBlock:nil
          downloadProgressBlock:nil
@@ -652,6 +673,7 @@
                     HTTPMethod:@"POST"
                  baseURLString:baseURLString
                     parameters:params
+             isJSONPOSTRequest:NO
                  oauthCallback:nil
            uploadProgressBlock:nil
          downloadProgressBlock:nil

@@ -372,6 +372,7 @@ authenticateInsteadOfAuthorize:authenticateInsteadOfAuthorize
                       HTTPMethod:HTTPMethod
                    baseURLString:baseURLString
                       parameters:params
+            isJSONPOSTRequest:NO
              uploadProgressBlock:uploadProgressBlock
            downloadProgressBlock:downloadProgressBlock
                     successBlock:successBlock
@@ -394,6 +395,7 @@ authenticateInsteadOfAuthorize:authenticateInsteadOfAuthorize
                       HTTPMethod:HTTPMethod
                    baseURLString:baseURLString
                       parameters:params
+               isJSONPOSTRequest:NO
              uploadProgressBlock:uploadProgressBlock
            downloadProgressBlock:downloadProgressBlock
                     successBlock:^(id request, NSDictionary *requestHeaders, NSDictionary *responseHeaders, id response) {
@@ -458,6 +460,7 @@ authenticateInsteadOfAuthorize:authenticateInsteadOfAuthorize
                       HTTPMethod:@"GET"
                    baseURLString:baseURLString
                       parameters:parameters
+               isJSONPOSTRequest:NO
              uploadProgressBlock:nil
            downloadProgressBlock:^(id request, NSData *data) {
                if(downloadProgressBlock) downloadProgressBlock(data);
@@ -475,11 +478,11 @@ authenticateInsteadOfAuthorize:authenticateInsteadOfAuthorize
                                downloadProgressBlock:(void(^)(NSData *data))downloadProgressBlock
                                         successBlock:(void(^)(NSDictionary *rateLimits, id response))successBlock
                                           errorBlock:(void(^)(NSError *error))errorBlock {
-    
     return [_oauth fetchResource:resource
                       HTTPMethod:@"POST"
                    baseURLString:baseURLString
                       parameters:parameters
+               isJSONPOSTRequest:NO
              uploadProgressBlock:uploadProgressBlock
            downloadProgressBlock:^(id request, NSData *data) {
                if(downloadProgressBlock) downloadProgressBlock(data);
@@ -493,6 +496,7 @@ authenticateInsteadOfAuthorize:authenticateInsteadOfAuthorize
 - (NSObject<STTwitterRequestProtocol> *)postResource:(NSString *)resource
                                        baseURLString:(NSString *)baseURLString
                                           parameters:(NSDictionary *)parameters
+                                   isJSONPOSTRequest:(BOOL)isJSONPOSTRequest
                                  uploadProgressBlock:(void(^)(int64_t bytesWritten, int64_t totalBytesWritten, int64_t totalBytesExpectedToWrite))uploadProgressBlock
                                downloadProgressBlock:(void(^)(NSData *data))downloadProgressBlock
                                           errorBlock:(void(^)(NSError *error))errorBlock {
@@ -501,6 +505,29 @@ authenticateInsteadOfAuthorize:authenticateInsteadOfAuthorize
                       HTTPMethod:@"POST"
                    baseURLString:baseURLString
                       parameters:parameters
+               isJSONPOSTRequest:NO
+             uploadProgressBlock:uploadProgressBlock
+           downloadProgressBlock:^(id request, NSData *data) {
+               if(downloadProgressBlock) downloadProgressBlock(data);
+           } successBlock:nil
+                      errorBlock:^(id request, NSDictionary *requestHeaders, NSDictionary *responseHeaders, NSError *error) {
+                          errorBlock(error);
+                      }];
+}
+
+- (NSObject<STTwitterRequestProtocol> *)postJSONResource:(NSString *)resource
+                                           baseURLString:(NSString *)baseURLString
+                                              parameters:(NSDictionary *)parameters
+                                     uploadProgressBlock:(void (^)(int64_t, int64_t, int64_t))uploadProgressBlock
+                                   downloadProgressBlock:(void (^)(NSData *))downloadProgressBlock
+                                            successBlock:(void (^)(NSDictionary *, id))successBlock
+                                              errorBlock:(void (^)(NSError *))errorBlock {
+
+    return [_oauth fetchResource:resource
+                      HTTPMethod:@"POST"
+                   baseURLString:baseURLString
+                      parameters:parameters
+               isJSONPOSTRequest:YES
              uploadProgressBlock:uploadProgressBlock
            downloadProgressBlock:^(id request, NSData *data) {
                if(downloadProgressBlock) downloadProgressBlock(data);
@@ -520,6 +547,7 @@ authenticateInsteadOfAuthorize:authenticateInsteadOfAuthorize
                       HTTPMethod:@"GET"
                    baseURLString:baseURLString
                       parameters:parameters
+               isJSONPOSTRequest:NO
              uploadProgressBlock:nil
            downloadProgressBlock:^(id request, NSData *data) {
                if(downloadProgressBlock) downloadProgressBlock(data);
@@ -586,6 +614,26 @@ authenticateInsteadOfAuthorize:authenticateInsteadOfAuthorize
         downloadProgressBlock:nil
                  successBlock:successBlock
                    errorBlock:errorBlock];
+}
+
+// convenience
+- (NSObject<STTwitterRequestProtocol> *)postJSONAPIResource:(NSString *)resource
+                                                 parameters:(NSDictionary *)parameters
+                                               successBlock:(void(^)(NSDictionary *rateLimits, id json))successBlock
+                                                 errorBlock:(void(^)(NSError *error))errorBlock {
+
+    return [_oauth fetchResource:resource
+                      HTTPMethod:@"POST"
+                   baseURLString:kBaseURLStringAPI_1_1
+                      parameters:parameters
+               isJSONPOSTRequest:YES
+             uploadProgressBlock:nil
+           downloadProgressBlock:nil
+                    successBlock:^(id request, NSDictionary *requestHeaders, NSDictionary *responseHeaders, id response) {
+                        if(successBlock) successBlock(responseHeaders, response);
+                    } errorBlock:^(id request, NSDictionary *requestHeaders, NSDictionary *responseHeaders, NSError *error) {
+                        if(errorBlock) errorBlock(error);
+                    }];
 }
 
 /**/
@@ -1870,6 +1918,37 @@ authenticateInsteadOfAuthorize:authenticateInsteadOfAuthorize
                     } errorBlock:^(NSError *error) {
                         errorBlock(error);
                     }];
+}
+
+- (NSObject<STTwitterRequestProtocol> *)postDirectMessageEvent:(NSString *)text
+                                                     forUserID:(NSString *)userID
+                                                       mediaID:(NSString *)mediaID
+                                                  successBlock:(void(^)(NSDictionary *message))successBlock
+                                                    errorBlock:(void(^)(NSError *error))errorBlock {
+
+    NSAssert(text != nil, @"text is required");
+    NSAssert(userID != nil, @"userID is required");
+
+    NSMutableDictionary *md = [NSMutableDictionary dictionary];
+    md[@"type"] = @"message_create";
+    md[@"message_create"] = @{
+                              @"target": @{@"recipient_id": userID},
+                              @"message_data": @{@"text": text}
+                              };
+
+    if (mediaID) {
+        md[@"attachment"] = @{@"type": @"media", @"id": mediaID};
+    }
+
+    NSDictionary *parameters = @{@"event": md};
+
+    return [self postJSONAPIResource:@"direct_messages/events/new.json"
+                          parameters:parameters
+                        successBlock:^(NSDictionary *rateLimits, id response) {
+                            successBlock(response);
+                        } errorBlock:^(NSError *error) {
+                            errorBlock(error);
+                        }];
 }
 
 - (NSObject<STTwitterRequestProtocol> *)_postDirectMessage:(NSString *)status
@@ -5237,6 +5316,7 @@ authenticateInsteadOfAuthorize:authenticateInsteadOfAuthorize
                       HTTPMethod:@"GET"
                    baseURLString:@"https://analytics.twitter.com"
                       parameters:nil
+               isJSONPOSTRequest:NO
              uploadProgressBlock:nil
            downloadProgressBlock:nil
                     successBlock:^(id request, NSDictionary *requestHeaders, NSDictionary *responseHeaders, id response) {

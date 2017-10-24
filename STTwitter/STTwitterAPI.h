@@ -199,6 +199,14 @@ authenticateInsteadOfAuthorize:(BOOL)authenticateInsteadOfAuthorize // use NO if
                                         successBlock:(void(^)(NSDictionary *rateLimits, id response))successBlock
                                           errorBlock:(void(^)(NSError *error))errorBlock;
 
+- (NSObject<STTwitterRequestProtocol> *)postJSONResource:(NSString *)resource
+                                           baseURLString:(NSString *)baseURLString
+                                              parameters:(NSDictionary *)parameters
+                                     uploadProgressBlock:(void(^)(int64_t bytesWritten, int64_t totalBytesWritten, int64_t totalBytesExpectedToWrite))uploadProgressBlock
+                                   downloadProgressBlock:(void(^)(NSData *data))downloadProgressBlock
+                                            successBlock:(void(^)(NSDictionary *rateLimits, id response))successBlock
+                                              errorBlock:(void(^)(NSError *error))errorBlock;
+
 #pragma mark Timelines
 
 /*
@@ -737,6 +745,12 @@ authenticateInsteadOfAuthorize:(BOOL)authenticateInsteadOfAuthorize // use NO if
                                                  orUserID:(NSString *)userID
                                              successBlock:(void(^)(NSDictionary *message))successBlock
                                                errorBlock:(void(^)(NSError *error))errorBlock;
+
+- (NSObject<STTwitterRequestProtocol> *)postDirectMessageEvent:(NSString *)text
+                                                     forUserID:(NSString *)userID
+                                                       mediaID:(NSString *)mediaID
+                                                  successBlock:(void(^)(NSDictionary *message))successBlock
+                                                    errorBlock:(void(^)(NSError *error))errorBlock;
 
 #pragma mark Friends & Followers
 
