@@ -152,7 +152,7 @@ didReceiveResponse:(NSURLResponse *)response
     
     dispatch_async(dispatch_get_main_queue(), ^{
 
-        __strong typeof(weakSelf) strongSelf = weakSelf;
+        __strong typeof(self) strongSelf = weakSelf;
         
         if(strongSelf == nil) {
             completionHandler(NSURLSessionResponseCancel);
@@ -185,7 +185,7 @@ didReceiveResponse:(NSURLResponse *)response
         
         BOOL isStreaming = [[[[dataTask originalRequest] URL] host] rangeOfString:@"stream"].location != NSNotFound;
         
-        __strong typeof(weakSelf) strongSelf = weakSelf;
+        __strong typeof(self) strongSelf = weakSelf;
         if(strongSelf == nil) {
             return;
         }
@@ -210,7 +210,7 @@ totalBytesExpectedToSend:(int64_t)totalBytesExpectedToSend {
 
     dispatch_async(dispatch_get_main_queue(), ^{
         
-        __strong typeof(weakSelf) strongSelf = weakSelf;
+        __strong typeof(self) strongSelf = weakSelf;
         if(strongSelf == nil) {
             return;
         }
@@ -236,7 +236,7 @@ didCompleteWithError:(NSError *)error {
         
         //NSLog(@"-- didCompleteWithError: %@", [error localizedDescription]);
         
-        __strong typeof(weakSelf) strongSelf = weakSelf;
+        __strong typeof(self) strongSelf = weakSelf;
         if(strongSelf == nil) return;
         
         if(error) {

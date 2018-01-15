@@ -941,7 +941,7 @@ static STHTTPRequestCookiesStorage globalCookiesStoragePolicy = STHTTPRequestCoo
     
     dispatch_async(dispatch_get_main_queue(), ^{
         
-        __strong typeof(weakSelf) strongSelf = weakSelf;
+        __strong typeof(self) strongSelf = weakSelf;
         if(strongSelf == nil) return;
         
         if(error == nil) return; // normal session invalidation, no error
@@ -1008,7 +1008,7 @@ totalBytesExpectedToSend:(int64_t)totalBytesExpectedToSend {
     
     dispatch_async(dispatch_get_main_queue(), ^{
         
-        __strong typeof(weakSelf) strongSelf = weakSelf;
+        __strong typeof(self) strongSelf = weakSelf;
         if(strongSelf == nil) return;
         
         if(strongSelf.uploadProgressBlock) {
@@ -1026,7 +1026,7 @@ didCompleteWithError:(NSError *)error {
     
     dispatch_async(dispatch_get_main_queue(), ^{
         
-        __strong typeof(weakSelf) strongSelf = weakSelf;
+        __strong typeof(self) strongSelf = weakSelf;
         if(strongSelf == nil) return;
         
         if (error) {
@@ -1088,7 +1088,7 @@ didReceiveResponse:(NSURLResponse *)response
     
     dispatch_async(dispatch_get_main_queue(), ^{
         
-        __strong typeof(weakSelf) strongSelf = weakSelf;
+        __strong typeof(self) strongSelf = weakSelf;
         if(strongSelf == nil) return;
         
         if([dataTask.response isKindOfClass:[NSHTTPURLResponse class]]) {
@@ -1118,7 +1118,7 @@ didReceiveResponse:(NSURLResponse *)response
     
     dispatch_async(dispatch_get_main_queue(), ^{
         
-        __strong typeof(weakSelf) strongSelf = weakSelf;
+        __strong typeof(self) strongSelf = weakSelf;
         if(strongSelf == nil) return;
         
         [strongSelf.responseData appendData:data];
@@ -1139,7 +1139,7 @@ didReceiveResponse:(NSURLResponse *)response
     
     dispatch_async(dispatch_get_main_queue(), ^{
         
-        __strong typeof(weakSelf) strongSelf = weakSelf;
+        __strong typeof(self) strongSelf = weakSelf;
         if(strongSelf == nil) return;
         
         NSCachedURLResponse *actualResponse = (globalIgnoreCache || strongSelf.ignoreCache) ? nil : proposedResponse;

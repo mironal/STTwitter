@@ -85,7 +85,7 @@ NSString * const STTwitterOSInvalidatedAccount = @"STTwitterOSInvalidatedAccount
   downloadProgressBlock:nil
            successBlock:^(NSObject<STTwitterRequestProtocol> *request, NSDictionary *requestHeaders, NSDictionary *responseHeaders, id response) {
                
-               __strong typeof(weakSelf) strongSelf = weakSelf;
+               __strong typeof(self) strongSelf = weakSelf;
                if(strongSelf == nil) return;
                
                if([response isKindOfClass:[NSDictionary class]] == NO) {

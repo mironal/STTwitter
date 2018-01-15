@@ -41,7 +41,7 @@ static NSDateFormatter *dateFormatter = nil;
         
         if(weakSelf == nil) return;
         
-        __strong typeof(weakSelf) strongSelf = weakSelf;
+        __strong typeof(self) strongSelf = weakSelf;
         
         if([strongSelf.oauth isKindOfClass:[STTwitterOS class]]) {
             
@@ -4532,7 +4532,7 @@ authenticateInsteadOfAuthorize:authenticateInsteadOfAuthorize
         dispatch_group_enter(group);
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
             
-            __strong typeof(weakSelf) strongSelf = weakSelf;
+            __strong typeof(self) strongSelf = weakSelf;
             if(strongSelf == nil) {
                 lastErrorReceived = [NSError errorWithDomain:@"STTwitter" code:9999 userInfo:nil]; // TODO: improve
                 return;
